@@ -1,3 +1,5 @@
+/// <reference path="typings.d.ts" />
+
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
@@ -20,11 +22,12 @@ import PrettyError from 'pretty-error';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './containers/error';
-import errorPageStyle from './containers/error/styles.css';
 import createFetch from './utils/createFetch';
 import Routes from './routes';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
+
+const errorPageStyle = require('./containers/error/styles.css')
 
 const app = express();
 
@@ -87,11 +90,11 @@ app.get('*', async (req, res, next) => {
       // Universal HTTP client
       fetch: createFetch(fetch, {
         baseUrl: config.api.serverUrl,
-        cookie: req.headers.cookie,
+        cookie: req.headers.cookie as string,
       }),
     };
 
-    const data = {};
+    const data: any = {};
     data.children = ReactDOM.renderToString(
       <App context={context}>
         <StaticRouter context={context} location={req.url}>
@@ -99,7 +102,7 @@ app.get('*', async (req, res, next) => {
         </StaticRouter>
       </App>,
     );
-    data.styles = [{ id: 'css', cssText: [...css].join('') }];
+    data.styles = [{ id: 'css', cssText: [Array.from(css)].join('') }];
     data.scripts = [];
     // if (route.chunks) {
     //   data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
@@ -125,7 +128,7 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error(pe.render(err));
   const html = ReactDOM.renderToStaticMarkup(
     <Html
@@ -148,7 +151,7 @@ if (!module.hot) {
     console.info(`The server is running at http://localhost:${config.port}/`);
   });
 } else {
-  app.hot = module.hot;
+  (app as any).hot = module.hot;
   // module.hot.accept('./router');
 }
 

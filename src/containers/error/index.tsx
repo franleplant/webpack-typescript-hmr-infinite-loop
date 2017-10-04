@@ -8,18 +8,20 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './styles.css';
+const s = require('./styles.css');
 
-class ErrorPage extends React.Component {
-  static propTypes = {
-    error: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      stack: PropTypes.string.isRequired,
-    }),
-  };
+interface Props {
+  error?: {
+    name: string,
+    message: string,
+    stack: string,
+  },
+}
+
+interface State {}
+
+class ErrorPage extends React.Component<Props, State> {
 
   static defaultProps = {
     error: null,

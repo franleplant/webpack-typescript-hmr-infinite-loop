@@ -8,27 +8,26 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import serialize from 'serialize-javascript';
 import config from '../config';
 
 /* eslint-disable react/no-danger */
 
-class Html extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    styles: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        cssText: PropTypes.string.isRequired,
-      }).isRequired,
-    ),
-    scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
-    app: PropTypes.object, // eslint-disable-line
-    children: PropTypes.string.isRequired,
-  };
+interface Props {
+  title: string,
+  description: string,
+  styles?: Array<{
+    id: string,
+    cssText: string,
+  }>
+  scripts?: Array<string>,
+  app?: any,
+  children: string,
+};
 
+interface State {}
+
+class Html extends React.Component<Props, State> {
   static defaultProps = {
     styles: [],
     scripts: [],
@@ -47,7 +46,7 @@ class Html extends React.Component {
           <meta name="description" content={description} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           {scripts.map(script =>
-            <link key={script} rel="preload" href={script} as="script" />,
+            <link key={script} rel="preload" href={script} {...{as:"script"}} />,
           )}
           <link rel="apple-touch-icon" href="apple-touch-icon.png" />
           {styles.map(style =>

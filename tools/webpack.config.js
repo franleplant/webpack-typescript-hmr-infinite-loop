@@ -21,6 +21,7 @@ const isAnalyze =
   process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
 const reScript = /\.m?jsx?$/;
+const reTypescript = /\.tsx?$/;
 const reStyle = /\.(css|less|scss|sss)$/;
 const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
 const staticAssetName = isDebug
@@ -50,7 +51,9 @@ const config = {
   resolve: {
     // Allow absolute paths in imports, e.g. import Button from 'components/Button'
     // Keep in sync with .flowconfig and .eslintrc
+    // TODO this is not working and probably too nope for now
     modules: ['node_modules', 'src'],
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
   },
 
   module: {
@@ -58,6 +61,8 @@ const config = {
     strictExportPresence: true,
 
     rules: [
+      { test: reTypescript, use: 'ts-loader' },
+
       // Rules for JS / JSX
       {
         test: reScript,
@@ -227,7 +232,15 @@ const config = {
       // Return public URL for all assets unless explicitly excluded
       // DO NOT FORGET to update `exclude` list when you adding a new loader
       {
-        exclude: [reScript, reStyle, reImage, /\.json$/, /\.txt$/, /\.md$/],
+        exclude: [
+          reScript,
+          reTypescript,
+          reStyle,
+          reImage,
+          /\.json$/,
+          /\.txt$/,
+          /\.md$/,
+        ],
         loader: 'file-loader',
         options: {
           name: staticAssetName,
@@ -285,7 +298,13 @@ const clientConfig = {
   target: 'web',
 
   entry: {
-    client: ['babel-polyfill', './src/client.js'],
+    client: ['babel-polyfill', './src/client.tsx'],
+  },
+
+  // Webpack mutates resolve object, so clone it to avoid issues
+  // https://github.com/webpack/webpack/issues/4817
+  resolve: {
+    ...config.resolve,
   },
 
   plugins: [
@@ -366,7 +385,7 @@ const serverConfig = {
   target: 'node',
 
   entry: {
-    server: ['babel-polyfill', './src/server.js'],
+    server: ['babel-polyfill', './src/server.tsx'],
   },
 
   output: {

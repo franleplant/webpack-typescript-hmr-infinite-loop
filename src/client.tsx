@@ -1,3 +1,5 @@
+/// <reference path="typings.d.ts" />
+
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
@@ -25,7 +27,7 @@ import Routes from './routes';
 const context = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
-  insertCss: (...styles) => {
+  insertCss: (...styles: Array<any>) => {
     // eslint-disable-next-line no-underscore-dangle
     const removeCss = styles.map(x => x._insertCss());
     return () => {
@@ -34,7 +36,7 @@ const context = {
   },
   // Universal HTTP client
   fetch: createFetch(self.fetch, {
-    baseUrl: window.App.apiUrl,
+    baseUrl: (window as any).App.apiUrl,
   }),
 };
 

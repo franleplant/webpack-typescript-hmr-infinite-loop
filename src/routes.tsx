@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Home from 'containers/home';
-import About from 'containers/about';
-import Admin from 'containers/admin';
-import Contact from 'containers/contact';
-import Login from 'containers/login';
-import Registration from 'containers/register';
-import Privacy from 'containers/privacy';
-import NotFound from 'containers/not-found';
+import Home from './containers/home';
+import About from './containers/about';
+import Admin from './containers/admin';
+import Contact from './containers/contact';
+import Login from './containers/login';
+import Registration from './containers/register';
+import Privacy from './containers/privacy';
+import NotFound from './containers/not-found';
 
 const Routes = () =>
   <Switch>
