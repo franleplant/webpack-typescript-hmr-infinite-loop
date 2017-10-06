@@ -7,14 +7,13 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-/* @flow */
 
-type Fetch = (url: string, options: ?any) => Promise<any>;
+//type Fetch = (url: string, options: ?any) => Promise<any>;
 
-type Options = {
-  baseUrl: string,
-  cookie?: string,
-};
+//type Options = {
+  //baseUrl: string,
+  //cookie?: string,
+//};
 
 /**
  * Creates a wrapper function around the HTML5 Fetch API that provides
@@ -22,7 +21,7 @@ type Options = {
  * of boilerplate code in the application.
  * https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch
  */
-function createFetch(fetch: Fetch, { baseUrl, cookie }: Options) {
+function createFetch(fetch, { baseUrl, cookie }) {
   // NOTE: Tweak the default options to suite your application needs
   const defaults = {
     method: 'POST', // handy with GraphQL backends
@@ -35,7 +34,7 @@ function createFetch(fetch: Fetch, { baseUrl, cookie }: Options) {
     },
   };
 
-  return (url: string, options: any) =>
+  return (url, options) =>
     url.startsWith('/graphql') || url.startsWith('/api')
       ? fetch(`${baseUrl}${url}`, {
           ...defaults,

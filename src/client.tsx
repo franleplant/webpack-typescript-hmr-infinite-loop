@@ -37,7 +37,7 @@ const context = {
   // Universal HTTP client
   fetch: createFetch(self.fetch, {
     baseUrl: (window as any).App.apiUrl,
-  }),
+  } as any),
 };
 
 // let onRenderComplete = function initialRenderComplete() {

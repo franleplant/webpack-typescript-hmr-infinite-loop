@@ -14,6 +14,7 @@ import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
+import { CheckerPlugin } from 'awesome-typescript-loader';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -21,7 +22,7 @@ const isAnalyze =
   process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
 const reScript = /\.m?jsx?$/;
-const reTypescript = /\.tsx?$/;
+export const reTypescript = /\.tsx?$/;
 const reStyle = /\.(css|less|scss|sss)$/;
 const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
 const staticAssetName = isDebug
@@ -61,7 +62,62 @@ const config = {
     strictExportPresence: true,
 
     rules: [
-      { test: reTypescript, use: 'ts-loader' },
+      { test: reTypescript,
+        rules: [
+          {
+            //include: path.resolve(__dirname, '../src'),
+            loader: 'babel-loader',
+            options: {
+              // https://github.com/babel/babel-loader#options
+              cacheDirectory: isDebug,
+
+              // https://babeljs.io/docs/usage/options/
+              babelrc: false,
+              presets: [
+                // A Babel preset that can automatically determine the Babel plugins and polyfills
+                // https://github.com/babel/babel-preset-env
+                [
+                  'env',
+                  {
+                    targets: {
+                      browsers: pkg.browserslist,
+                      uglify: true,
+                    },
+                    modules: false,
+                    useBuiltIns: false,
+                    debug: false,
+                  },
+                ],
+                // Experimental ECMAScript proposals
+                // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
+                'stage-2',
+                // JSX, Flow
+                // https://github.com/babel/babel/tree/master/packages/babel-preset-react
+                'react',
+                // Optimize React code for the production build
+                // https://github.com/thejameskyle/babel-react-optimize
+                ...(isDebug ? [] : ['react-optimize']),
+              ],
+              plugins: [
+                // Adds component stack to warning messages
+                // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
+                ...(isDebug ? ['transform-react-jsx-source'] : []),
+                // Adds __self attribute to JSX which React will use for some warnings
+                // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
+                ...(isDebug ? ['transform-react-jsx-self'] : []),
+              ],
+            },
+          },
+          {
+            loader: 'awesome-typescript-loader',
+            options: {
+              useBabel: true,
+              useCache: true
+            }
+
+          },
+        ]
+      },
 
       // Rules for JS / JSX
       {
@@ -261,6 +317,10 @@ const config = {
           ]),
     ],
   },
+
+  plugins: [
+    //new CheckerPlugin()
+  ],
 
   // Don't attempt to continue if there are any errors.
   bail: !isDebug,
